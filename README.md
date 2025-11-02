@@ -33,7 +33,7 @@ main.py                             # Entry point for running the self-reflectiv
 This section provides a technical overview of the architecture behind our RAG system. The diagram below illustrates the overall architecture of the system. In brief, given a specific asset, the system uses API calls to fetch relevant news articles from the internet. It then analyzes the content to generate a market sentiment report for that asset. Finally, the report is formatted into an HTML-based weekly newsletter and sent via email to the intended recipients. The LLM we used for the RAG is  `gemini-2.5-flash`.
 
 <p align="center">
-    <img src='rag_diagram.png' width=400px>
+    <img src='resources/rag_diagram.png' width=400px>
 </p>
 
 ### Retrieve News Articles

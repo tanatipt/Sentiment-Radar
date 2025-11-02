@@ -18,14 +18,11 @@ dependencies = [
     "finvizfinance (>=1.1.1,<2.0.0)",
     "googlenewsdecoder (>=0.1.7,<0.2.0)",
     "yfinance (>=0.2.65,<0.3.0)",
-    "tradingview-scraper (>=0.4.8,<0.5.0)",
     "dynaconf (>=3.2.11,<4.0.0)",
     "dotenv (>=0.9.9,<0.10.0)",
     "langchain-community (>=0.3.27,<0.4.0)",
-    "python-dotenv (>=1.1.1,<2.0.0)"
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "langchain-openai>=0.3.35",
+    "setuptools>=80.9.0",
+    "tradingview-scraper>=0.4.8",
 ]
-
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
