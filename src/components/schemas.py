@@ -165,7 +165,7 @@ class UsefulnessOutput(BaseModel):
         )
     )
     criticisms: Optional[List[str]] = Field(
-        None,
+        ...,
         description=(
             "If the report is not useful, provide a list of specific, actionable criticisms "
             "explaining how to make it more relevant and aligned with market sentiment."
