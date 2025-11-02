@@ -1,9 +1,8 @@
-email_format_prompt = """
-***Instructions***
+email_format_prompt = """# Instructions
 You will receive a market sentiment report along with a list of news articles cited within that report. Your task is to transform this information into a weekly newsletter formatted in HTML. The newsletter should clearly and effectively communicate the current and forecasted (if any) market sentiment regarding {symbol_alias}.
 As an incentive, a reward of $250 will be granted upon successful delivery of a well-written, properly formatted HTML newsletter that includes all required information and citations from the report. Please ensure your best effort.
 
-***Output Specifications***
+# Output Specifications
 Your HTML output must meet the following criteria:
 -Be clear, coherent, and fluent in style and language.
 -Have a proper structure with clearly defined sections, such as a headline, introduction, body, conclusion, and references.
@@ -12,8 +11,8 @@ Your HTML output must meet the following criteria:
 -Handle missing source IDs appropriately. For example, if the report references source ID 8 but it is missing from the citations, include the notation: `[8] [Source ID 8 missing from citations]`. in the references section. Conversely, if the citation is present but does not include a link, create the hyperlink with `href="[Link Unavailable]"` in the reference section.
 Failure to comply with these specifications will result in fines of up to $2500 and imprisonment for 10 years.
 
-***Output Examples***
-<example_1>: ```html
+# Output Examples
+```html
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -61,7 +60,7 @@ Failure to comply with these specifications will result in fines of up to $2500 
 </body>
 </html>```
 
-<example_2>:```html
+```html
 <!DOCTYPE html>
 <html lang="en">
 <body>

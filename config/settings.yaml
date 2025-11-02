@@ -1,15 +1,21 @@
 default:
-  generator_model : 
-    model_name : gemini-2.5-flash
+  max_reflection_round: 3
+
+  generator : 
+    model_class: ChatOpenAI
     model_params:
+      model: gpt-4.1-mini
       temperature : 0.0
       top_p : 0.0
-  critic_model : 
-    model_name : gemini-2.5-flash
+
+  critic: 
+    model_class: ChatOpenAI
     model_params:
+      model: gpt-4.1-mini
       temperature : 0.0
       top_p : 0.0
-  target_assets:
+
+  assets:
     binance: 
       Bitcoin: BTCUSDT
       Ethereum: ETHUSDT

@@ -1,40 +1,42 @@
 from langgraph.graph import StateGraph, START, END
-from langchain_google_genai import ChatGoogleGenerativeAI
-from components.schemas import State
-from components.retrieve_news import retrieve_news
-from components.analyse_market_sentiment import analyse_market_sentiment
-from components.grade_generation import grade_generation
-from components.email_formatter import email_formatter
+from src.components.schemas import State, ModelConfig, AssetInformation
+from src.components.retrieve_news import retrieve_news
+from src.components.analyse_sentiment import analyse_market_sentiment
+from src.components.grade_generation import grade_generation, route_flow
+from src.components.email_formatter import email_formatter
+from src.mapper import get_class
 from config import settings
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class GraphConstructor:
     def __init__(
         self, 
-        asset_type : str,
-        trading_symbol : str, 
-        trading_exchange : str,
-        symbol_alias : str
-        
+        generator_config: ModelConfig,
+        critic_config : ModelConfig,
+        asset_information: AssetInformation
     ):
         """
         Initializes the graph constructor with the necessary parameters for constructing the workflow graph.
 
         Args:
-            asset_type (str): The type of asset being analyzed (e.g., 'stocks', 'cryptocurrency').
-            trading_symbol (str): The trading symbol of the asset being analyzed (e.g., 'NVDA' for Nvidia).
-            trading_exchange (str): The exchange where the asset is traded (e.g., 'NASDAQ').
-            symbol_alias (str): An alias for the trading symbol, used for formatting and reporting purposes.
+            generator_config (ModelConfig): Configuration for the generator model.
+            critic_config (ModelConfig): Configuration for the critic model.
+            asset_information (AssetInformation): Information about the trading asset.
         """
+        generator_config = ModelConfig.model_validate(generator_config)
+        critic_config = ModelConfig.model_validate(critic_config)
+        asset_information = AssetInformation.model_validate(asset_information)
 
         # Initialize the language models for the workflow
-        generator_model = ChatGoogleGenerativeAI(model = settings.generator_model.model_name, **settings.generator_model.model_params)
-        critic_model = ChatGoogleGenerativeAI(model = settings.critic_model.model_name, **settings.generator_model.model_params)
+        generator_model = get_class("llm", generator_config.model_class)(**generator_config.model_params)
+        critic_model = get_class("llm", critic_config.model_class)(**critic_config.model_params)
+
         # Initialize the nodes of the workflow with the provided parameters
-        self.retrieve_news = self.init_node(retrieve_news, trading_symbol=trading_symbol, trading_exchange=trading_exchange, asset_type=asset_type)
-        self.analyse_sentiment = self.init_node(analyse_market_sentiment, model = generator_model, symbol_alias = symbol_alias)
-        self.grade_generation = self.init_node(grade_generation, model = critic_model, symbol_alias = symbol_alias)
-        self.email_formatter = self.init_node(email_formatter, model = generator_model,  symbol_alias = symbol_alias)
+        self.retrieve_news = self.init_node(retrieve_news, asset_information=asset_information)
+        self.analyse_sentiment = self.init_node(analyse_market_sentiment, model = generator_model, asset_information=asset_information)
+        self.grade_generation = self.init_node(grade_generation, model = critic_model, asset_information=asset_information)
+        self.email_formatter = self.init_node(email_formatter, model = generator_model,  asset_information=asset_information)
 
 
         
@@ -50,10 +52,12 @@ class GraphConstructor:
         workflow.add_node("retrieve_news", self.retrieve_news)
         workflow.add_node("analyse_sentiment", self.analyse_sentiment)
         workflow.add_node('email_formatter', self.email_formatter)
+        workflow.add_node("grade_generation", self.grade_generation)
 
         workflow.add_edge(START, "retrieve_news")
         workflow.add_edge("retrieve_news", "analyse_sentiment")
-        workflow.add_conditional_edges("analyse_sentiment", self.grade_generation)
+        workflow.add_edge("analyse_sentiment", "grade_generation")
+        workflow.add_conditional_edges("grade_generation", route_flow)
         workflow.add_edge('email_formatter', END)
 
         return workflow
@@ -96,4 +100,3 @@ class GraphConstructor:
                 f.write(png_graph)
 
         return graph
-    

@@ -5,48 +5,46 @@ from tradingview_scraper.symbols.news import NewsScraper
 from datetime import datetime, timedelta
 from langchain.docstore.document import Document
 from zoneinfo import ZoneInfo
-from components.schemas import State
+from src.components.schemas import State, AssetInformation
 from typing_extensions import List
+from langsmith import traceable
 
-def retrieve_news(state : State, trading_symbol: str, asset_type : str, trading_exchange : str) -> State:
+def retrieve_news(state : State, asset_information : AssetInformation) -> State:
     """
     Retrieves and filters news articles relevant to the specified trading symbol and asset type.
     Args:
         state (State): The current pipeline state.
-        trading_symbol (str): The trading symbol for which news articles are to be retrieved.
-        asset_type (str): The type of asset (e.g., 'stocks', 'cryptocurrency').
-        trading_exchange (str): The exchange where the asset is traded (e.g., 'NASDAQ').
+        asset_information (AssetInformation): Information about the trading asset.
     Returns:
-        State: A dictionary containing the retrieved and formatted news articles.
+        State: An updated state of the graph.
     """
     # Get current time in Asia/Bangkok timezone
     current_time = datetime.now(ZoneInfo('Asia/Bangkok'))
     # Retrieve news articles from various sources
-    yfinance_news = retrieve_yfinance_news(current_time, trading_symbol, asset_type)
-    tv_news = retrieve_tv_news(executed_time=current_time, trading_symbol=trading_symbol, trading_exchange=trading_exchange)
+    yfinance_news = retrieve_yfinance_news(current_time, asset_information.trading_symbol, asset_information.asset_type)
+    tv_news = retrieve_tv_news(executed_time=current_time, trading_symbol=asset_information.trading_symbol, trading_exchange=asset_information.trading_exchange)
 
     news = yfinance_news + tv_news
 
-    if asset_type == "stocks":
-        finviz_news = retrieve_finviz_news(executed_time=current_time, trading_symbol=trading_symbol)
+    if asset_information.asset_type == "stocks":
+        finviz_news = retrieve_finviz_news(executed_time=current_time, trading_symbol=asset_information.trading_symbol)
         news += finviz_news
 
     # Filter out duplicate news articles based on their links
     filtered_news = filter_trading_news(news)
     # Format the filtered news articles for further processing
     formatted_news = "\n\n".join([
-        f"""
-        Source ID:{i}
+        f"""========== News Article {i} ==========
         News Title: {doc.metadata['title']}
-        News Link: {doc.metadata['link'] if doc.metadata['link'] != '' else '[Link Unavailable]'}
-        News Full Text: {doc.page_content.strip()}""" 
+        News Content: {doc.page_content.strip()}""" 
         for i,doc in enumerate(filtered_news)
     ])
-
+    
     return {'retrieved_news' : filtered_news, "formatted_news" : formatted_news}
 
     
 
+@traceable
 def filter_trading_news(docs : List) -> List:
     """
     Filters out duplicate news articles based on their links.
@@ -71,7 +69,7 @@ def filter_trading_news(docs : List) -> List:
 
     return filtered_docs
 
-
+@traceable
 def retrieve_yfinance_news(executed_time : datetime, trading_symbol : str, asset_type : str) -> List:
     """
     Retrieves news articles for the specified trading symbol using yfinance.
@@ -85,7 +83,7 @@ def retrieve_yfinance_news(executed_time : datetime, trading_symbol : str, asset
         List: A list of Document objects containing the retrieved news articles.
     """
     # Calculate the start date (7 days ago from execution time)
-    start_date = executed_time - timedelta(days = 7)
+    start_date = executed_time - timedelta(days = 1)
     # Format ticker for cryptocurrencies, otherwise use trading symbol
     if asset_type == "cryptocurrency":
         ticker = f"{trading_symbol[:-4]}-USD"
@@ -129,6 +127,7 @@ def retrieve_yfinance_news(executed_time : datetime, trading_symbol : str, asset
     # Return list of Document objects
     return docs
 
+@traceable
 def retrieve_finviz_news(executed_time : datetime, trading_symbol : str) -> List:
     """
     Retrieves news articles for the specified trading symbol using Finviz.
@@ -141,7 +140,7 @@ def retrieve_finviz_news(executed_time : datetime, trading_symbol : str) -> List
         List: A list of Document objects containing the retrieved news articles.
     """
     # Calculate the start date (7 days ago from execution time)
-    start_date =  executed_time - timedelta(days = 7)
+    start_date =  executed_time - timedelta(days = 1)
     # Retrieve news for the given trading symbol using Finviz
     stock = finvizfinance(trading_symbol)
     news = stock.ticker_news()
@@ -183,6 +182,7 @@ def retrieve_finviz_news(executed_time : datetime, trading_symbol : str) -> List
     # Return list of Document objects
     return docs
 
+@traceable
 def retrieve_tv_news(executed_time : datetime,trading_symbol : str, trading_exchange : str) -> List:
     """
     Retrieves news articles for the specified trading symbol from TradingView.
@@ -195,7 +195,7 @@ def retrieve_tv_news(executed_time : datetime,trading_symbol : str, trading_exch
     Returns:
         List: A list of Document objects containing the retrieved news articles.
     """
-    start_date = executed_time - timedelta(days = 7)
+    start_date = executed_time - timedelta(days = 1)
     docs = []
     news_scraper = NewsScraper()
     # Scrape latest news headlines for the given symbol and exchange
