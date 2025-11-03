@@ -7,6 +7,7 @@ and is deemed accurate, you will be awarded $250.
 # Constraints & Penalty
 However, you will be fined up to $2500 and face imprisonment for 10 year if found guilty of any of the following violations:
 -Including incorrect or irrelevant citations that do not support the claims made in your analysis.
+-Adding citations or references to news articles within the report itself. All citations must appear exclusively in the citations field—no in-text citations are allowed.
 -Making claims in your analysis that are not explicitly stated or reasonably inferred from the articles.
 -Providing the current market sentiment classification other than one of the following: "Strongly Negative", "Negative", "Neutral", "Positive",
 or "Strongly Positive".

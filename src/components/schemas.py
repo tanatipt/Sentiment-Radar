@@ -4,16 +4,17 @@ from langchain.docstore.document import Document
 from langchain_core.messages import BaseMessage
 from typing_extensions import Optional
 from langgraph.graph.message import add_messages
-from langchain_core.language_models import BaseChatModel
 
 
 class AssetInformation(BaseModel):
+    """Asset Information"""
     asset_type : Literal["cryptocurrency", "stocks"]
     trading_symbol : str
     trading_exchange: Literal["BINANCE", "NASDAQ"]
     symbol_alias : str
 
 class ModelConfig(BaseModel):
+    """Model configuration"""
     model_class : str
     model_params: Dict
 
@@ -28,7 +29,9 @@ class Step(BaseModel):
 class Report(BaseModel):
     """
     A Pydantic model representing a structured market sentiment analysis report
-    generated from a list of provided news articles.
+    generated from a list of provided news articles. Do NOT include any citations or references 
+    to the news articles within the report itself. (i.e. no in-text citations) All citations must be 
+    recorded separately in the `citations` field.
     """
 
     chain_of_thought: List[Step] = Field(

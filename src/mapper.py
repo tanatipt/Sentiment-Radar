@@ -10,6 +10,21 @@ llm_map = {
 
 
 def get_class(map_type : str, name : str) -> Any:
+    """
+    Returns the appropriate class to instantiate
+
+    Args:
+        map_type (str): Mapping type
+        name (str): Name of class to retrieve
+
+    Raises:
+        Exception: Specified mapping type does not exist
+        Exception: Name of class to retrieve from mapping does not exist
+
+    Returns:
+        Any: The class to retrieve
+    """
+
     map_dict = {
         "llm" : llm_map,
     }

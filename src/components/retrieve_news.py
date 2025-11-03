@@ -83,7 +83,7 @@ def retrieve_yfinance_news(executed_time : datetime, trading_symbol : str, asset
         List: A list of Document objects containing the retrieved news articles.
     """
     # Calculate the start date (7 days ago from execution time)
-    start_date = executed_time - timedelta(days = 1)
+    start_date = executed_time - timedelta(days = 7)
     # Format ticker for cryptocurrencies, otherwise use trading symbol
     if asset_type == "cryptocurrency":
         ticker = f"{trading_symbol[:-4]}-USD"
@@ -140,7 +140,7 @@ def retrieve_finviz_news(executed_time : datetime, trading_symbol : str) -> List
         List: A list of Document objects containing the retrieved news articles.
     """
     # Calculate the start date (7 days ago from execution time)
-    start_date =  executed_time - timedelta(days = 1)
+    start_date =  executed_time - timedelta(days = 7)
     # Retrieve news for the given trading symbol using Finviz
     stock = finvizfinance(trading_symbol)
     news = stock.ticker_news()
@@ -195,7 +195,7 @@ def retrieve_tv_news(executed_time : datetime,trading_symbol : str, trading_exch
     Returns:
         List: A list of Document objects containing the retrieved news articles.
     """
-    start_date = executed_time - timedelta(days = 1)
+    start_date = executed_time - timedelta(days = 7)
     docs = []
     news_scraper = NewsScraper()
     # Scrape latest news headlines for the given symbol and exchange
