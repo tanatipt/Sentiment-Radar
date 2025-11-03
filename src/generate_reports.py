@@ -120,7 +120,7 @@ def generate_and_send_reports(exchanges: Dict[str, str]) -> None:
 
     for exchange, asset_type in exchanges.items():
         subject = f"{current_day} {asset_type.capitalize()} Sentiment Report"
-        trading_symbols = settings.assets.get(exchange, {})
+        trading_symbols = settings.assets.get(exchange.lower(), {})
         sections = []
 
         for alias, symbol in trading_symbols.items():
