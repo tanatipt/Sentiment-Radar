@@ -5,7 +5,7 @@ In this project, we built a self-reflective, agentic AI system that uses chain-o
 - **Cryptocurrency**: Bitcoin, Ethereum, Ripple, Binance Coin, Solana and Chainlink
 - **Stocks**: Nvidia, Meta, Tesla, Palantir, Microsoft, Google
 
-## Project Structure
+# Project Structure
 
 Below is an overview of the project's structure, highlighting the most important files and their roles:
 ```bash
@@ -28,7 +28,7 @@ Below is an overview of the project's structure, highlighting the most important
 └── settings.yaml                       # Configuration file specifying the LLM model and targeted assets
 ```
 
-## Methodology
+# Methodology
 
 This section provides a technical overview of the architecture of our AI system, as illustrated in the diagram below. In brief, when a specific asset is selected, the system fetches relevant news articles from the internet via API calls. The content is then analyzed by a generator model to produce a market sentiment report for that asset.
 
@@ -38,7 +38,7 @@ A critic model subsequently evaluates the generated report. If the report is dee
     <img src='resources/rag_diagram.png' width=200px height = 500px>
 </p>
 
-### Retrieve News Articles
+## Retrieve News Articles
 
 In this node, we retrieve relevant news articles related to a given asset from the internet, using sources that are specific to finance. Specifically, news is fetched via API calls from three platforms: Yahoo Finance (yfinance), TradingView, and Finviz. For cryptocurrencies, only yfinance and TradingView are used, as Finviz does not provide news coverage for these asset types. In contrast, for stocks, all three sources are utilized.
 
@@ -46,7 +46,7 @@ For each source, the retrieved articles are sorted by their publication date and
 
 Chunking was unnecessary during retrieval because the `gpt-4.1-mini` model supports a large context window of approximately 1,000,000 tokens, allowing all retrieved articles to be processed together without issue. Moreover, the retrieved articles are typically all relevant to the target trading asset, so they should all be included as part of the summarisation.
 
-### Analyse Market Sentiment
+## Analyse Market Sentiment
 
 After retrieving the relevant news articles, we analyzed them to assess the market sentiment for the given asset and generate a comprehensive report detailing both the current sentiment and any projected future trends (if applicable). The report includes citations referencing the specific news articles used in the analysis, ensuring that the information is traceable and verifiable.
 
@@ -111,7 +111,7 @@ By default, `gpt-4.1-mini` generates structured output according to the order of
 Maintaining this field order is essential for preserving the logical progression of reasoning, analysis, and conclusion within the structured output. If the fields are not carefully ordered, the generation process can disrupt the intended reasoning flow—for example, producing the chain-of-thought after the report would render it ineffective, since the report relies on the chain-of-thought for guidance.
 
 
-### Self-Reflection
+## Self-Reflection
 
 
 After generating the sentiment report, we perform a self-reflection step that evaluates two key dimensions: groundedness and usefulness. Groundedness measures whether the report’s content is actually supported by the news articles it cites, while usefulness assesses whether the report provides meaningful insights into the current and projected (if applicable) market sentiment for the asset.
@@ -186,12 +186,12 @@ class UsefulnessOutput(BaseModel):
     )
 ```
 
-### Email Formatting
+## Email Formatting
 
 We proceed to the email formatting node only if the report has been assessed as both useful and grounded. In this node, the report is formatted into an HTML-based weekly newsletter that will be sent to the recipients. The newsletter includes clearly defined sections such as an introduction, conclusion, and references. To guide the model in producing the desired format, we provide few-shot examples of the expected HTML newsletter structure, encouraging it to generate content that closely follows the provided templates.
 
 
-## Installation & Project Setup
+# Installation & Project Setup
 
 This section provides instructions on how to install and set up the project locally. Before you begin, please ensure you have the following prerequisites:
 
