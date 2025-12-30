@@ -2,8 +2,8 @@
 
 In this project, we built a self-reflective, agentic AI system that uses chain-of-thought reasoning to analyze large volumes of online news articles and generate a concise summary of the overall market sentiment for a given asset. As an investor, I’ve always relied on news to build a solid fundamental understanding of the assets I am interested in. However, due to increasing work commitments, I’ve had less time to keep up. To address this, I decided to develop an AI system that can condense sentiment from multiple news sources into a few concise paragraphs—making it much quicker and easier for me to stay informed. These are the assets I am mainly focused on in this project:
 
-- Cryptocurrency: Bitcoin, Ethereum, Ripple, Binance Coin, Solana and Chainlink
-- Stocks: Nvidia, Meta, Tesla, Palantir, Microsoft, Google
+- **Cryptocurrency**: Bitcoin, Ethereum, Ripple, Binance Coin, Solana and Chainlink
+- **Stocks**: Nvidia, Meta, Tesla, Palantir, Microsoft, Google
 
 ## Project Structure
 
